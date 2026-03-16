@@ -2,8 +2,6 @@
 # SkillFree 一键安装脚本
 # curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@main/install.sh | bash
 
-set -e
-
 # ── 颜色定义 ─────────────────────────────────────────────────────────────────
 CYAN='\033[0;36m'
 BOLD_CYAN='\033[1;36m'
@@ -43,21 +41,19 @@ echo ""
 # ── Step 1: 检查环境 ──────────────────────────────────────────────────────────
 step "[ 1 / 3 ]  检查环境"
 
-# 检查 Node.js
 if ! command -v node &>/dev/null; then
   err "未检测到 Node.js，请先安装：https://nodejs.org（需要 18+）"
 fi
 NODE_VER=$(node -e "process.stdout.write(process.versions.node.split('.')[0])")
 if [ "$NODE_VER" -lt 18 ]; then
-  err "Node.js 版本过低（当前 v$(node -v)），需要 18+，请升级后重试"
+  err "Node.js 版本过低（当前 v$(node -v)），需要 18+"
 fi
-success "Node.js $(node -v) ✓"
+success "Node.js $(node -v)"
 
-# 检查 npm
 if ! command -v npm &>/dev/null; then
-  err "未检测到 npm，请检查 Node.js 安装是否完整"
+  err "未检测到 npm，请检查 Node.js 安装"
 fi
-success "npm $(npm -v) ✓"
+success "npm $(npm -v)"
 
 # ── Step 2: 安装 CLI ──────────────────────────────────────────────────────────
 step "[ 2 / 3 ]  安装 SkillFree CLI"
@@ -65,24 +61,32 @@ echo ""
 echo -e "  ${DIM}正在从 npm 安装 skillfree...${NC}"
 echo ""
 
-# 尝试全局安装，失败时提示 sudo
-if ! npm install -g skillfree 2>&1 | sed 's/^/    /'; then
+INSTALL_OK=false
+if npm install -g skillfree 2>&1 | sed 's/^/    /'; then
+  INSTALL_OK=true
+else
   echo ""
-  warn "全局安装失败，尝试使用 sudo..."
-  if ! sudo npm install -g skillfree 2>&1 | sed 's/^/    /'; then
-    err "安装失败，请手动运行：sudo npm install -g skillfree"
+  warn "权限不足，尝试 sudo..."
+  echo ""
+  if sudo npm install -g skillfree 2>&1 | sed 's/^/    /'; then
+    INSTALL_OK=true
   fi
+fi
+
+if [ "$INSTALL_OK" = false ]; then
+  err "安装失败，请手动运行：sudo npm install -g skillfree"
 fi
 
 echo ""
 success "SkillFree CLI 安装完成"
 
-# 验证 CLI 可用
+# 刷新 PATH（nvm 等工具安装后 CLI 可能还不在当前 shell 的 PATH 里）
+hash -r 2>/dev/null || true
+export PATH="$(npm root -g)/../bin:$PATH"
+
 if ! command -v skillfree &>/dev/null; then
-  warn "CLI 已安装但未在 PATH 中，请重启终端后运行 skillfree auth login"
-  echo ""
-  echo -e "  ${DIM}或手动运行：${NC}"
-  echo -e "  ${CYAN}  $(npm root -g)/.bin/skillfree auth login${NC}"
+  warn "CLI 已安装，但当前终端 PATH 未更新"
+  warn "请新开一个终端窗口，然后运行：skillfree auth login"
   echo ""
   exit 0
 fi
@@ -90,11 +94,10 @@ fi
 # ── Step 3: 登录 ──────────────────────────────────────────────────────────────
 step "[ 3 / 3 ]  登录账号"
 echo ""
-echo -e "  ${DIM}即将打开登录流程，请按提示操作${NC}"
-echo -e "  ${DIM}没有账号？前往注册：${CYAN}https://skillfree.tech${NC}"
+echo -e "  还没有账号？${CYAN}https://skillfree.tech/app${NC} 免费注册"
+echo -e "  注册后进入控制台 → API Keys → 创建一个 Key，粘贴到下方"
 echo ""
 
-# 调用 CLI 的 auth login 命令
 skillfree auth login
 
 # ── 完成 ──────────────────────────────────────────────────────────────────────
@@ -108,11 +111,8 @@ echo -e "  ${CYAN}  $ skillfree pilot --type chat --prompt \"你好\"${NC}"
 echo -e "  ${CYAN}  $ skillfree pilot --type image --prompt \"赛博朋克的上海\" --output ./img.png${NC}"
 echo -e "  ${CYAN}  $ skillfree pilot --type search --prompt \"今天的 AI 新闻\"${NC}"
 echo ""
-echo -e "  ${BOLD}其他命令：${NC}"
-echo -e "  ${DIM}  skillfree models          # 查看所有模型${NC}"
-echo -e "  ${DIM}  skillfree credits         # 查看积分余额${NC}"
-echo -e "  ${DIM}  skillfree --help          # 查看帮助${NC}"
+echo -e "  ${DIM}  skillfree models     # 查看所有模型${NC}"
+echo -e "  ${DIM}  skillfree credits    # 查看积分余额${NC}"
 echo ""
 echo -e "  ${DIM}充值积分：${NC}${CYAN}https://skillfree.tech/app/topup${NC}"
-echo -e "  ${DIM}完整文档：${NC}${CYAN}https://skillfree.tech/docs${NC}"
 echo ""
