@@ -80,7 +80,7 @@ fi
 echo ""
 success "SkillFree CLI 安装完成"
 
-# 刷新 PATH（nvm 等工具安装后 CLI 可能还不在当前 shell 的 PATH 里）
+# 刷新 PATH
 hash -r 2>/dev/null || true
 export PATH="$(npm root -g)/../bin:$PATH"
 
@@ -91,14 +91,51 @@ if ! command -v skillfree &>/dev/null; then
   exit 0
 fi
 
-# ── Step 3: 登录 ──────────────────────────────────────────────────────────────
+# ── Step 3: 登录（从 /dev/tty 读取，兼容 curl | bash）────────────────────────
 step "[ 3 / 3 ]  登录账号"
 echo ""
 echo -e "  还没有账号？${CYAN}https://skillfree.tech/app${NC} 免费注册"
-echo -e "  注册后进入控制台 → API Keys → 创建一个 Key，粘贴到下方"
+echo -e "  注册后进入控制台 → ${BOLD}API Keys${NC} → 创建一个 Key，粘贴到下方"
 echo ""
 
-skillfree auth login
+API_KEY=""
+while true; do
+  # 强制从 /dev/tty 读取，避免 curl | bash 时 stdin 被占用
+  printf "  请粘贴 API Key (sk-sf-...)，输入 q 跳过: "
+  read -r API_KEY </dev/tty
+
+  if [ "$API_KEY" = "q" ] || [ -z "$API_KEY" ]; then
+    echo ""
+    warn "已跳过登录，稍后可运行 ${CYAN}skillfree auth login${NC} 完成配置"
+    API_KEY=""
+    break
+  fi
+
+  if [[ "$API_KEY" != sk-sf-* ]]; then
+    echo -e "  ${RED}✗${NC} 格式不对，Key 应以 sk-sf- 开头，请重试\n"
+    continue
+  fi
+
+  # 验证 Key
+  printf "  验证中..."
+  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: Bearer $API_KEY" \
+    "https://skillfree.tech/v1/balance")
+
+  if [ "$HTTP_CODE" = "200" ]; then
+    echo -e " ${GREEN}✓${NC}"
+    break
+  else
+    echo -e " ${RED}✗${NC} (HTTP $HTTP_CODE)"
+    echo -e "  ${RED}✗${NC} Key 无效，请检查后重试\n"
+    API_KEY=""
+  fi
+done
+
+# 有效 Key → 交给 CLI 写入配置
+if [ -n "$API_KEY" ]; then
+  SKILLFREE_API_KEY="$API_KEY" skillfree auth save "$API_KEY"
+fi
 
 # ── 完成 ──────────────────────────────────────────────────────────────────────
 echo ""
