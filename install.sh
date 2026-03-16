@@ -116,20 +116,9 @@ while true; do
     continue
   fi
 
-  # 验证 Key
-  printf "  验证中..."
-  HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-    -H "Authorization: Bearer $API_KEY" \
-    "https://skillfree.tech/v1/balance")
-
-  if [ "$HTTP_CODE" = "200" ]; then
-    echo -e " ${GREEN}✓${NC}"
-    break
-  else
-    echo -e " ${RED}✗${NC} (HTTP $HTTP_CODE)"
-    echo -e "  ${RED}✗${NC} Key 无效，请检查后重试\n"
-    API_KEY=""
-  fi
+  # 格式正确，直接保存（不做网络验证，避免 GFW 干扰）
+  success "API Key 已保存"
+  break
 done
 
 # 有效 Key → 交给 CLI 写入配置
