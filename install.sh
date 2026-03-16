@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SkillFree 一键安装脚本
-# curl -fsSL https://skillfree.tech/install.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/ChongC1990/install/main/install.sh | bash
 
 set -e
 
