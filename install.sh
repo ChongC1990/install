@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SkillFree 一键安装脚本
-# curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@main/install.sh | bash
+# curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@v1.0.0/install.sh | bash
 
 # ── 颜色定义 ─────────────────────────────────────────────────────────────────
 CYAN='\033[0;36m'
@@ -130,15 +130,32 @@ fi
 echo ""
 echo -e "  ${DIM}────────────────────────────────────────────────────${NC}"
 echo ""
-echo -e "${BOLD_GREEN}  🎉 全部搞定！开始召唤龙虾吧${NC}"
+echo -e "${BOLD_GREEN}  🎉 全部搞定！现在你可以直接用自然语言让 SkillFree 干活${NC}"
 echo ""
-echo -e "  ${BOLD}快速体验：${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type chat --prompt \"你好\"${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type image --prompt \"赛博朋克的上海\" --output ./img.png${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type search --prompt \"今天的 AI 新闻\"${NC}"
+echo -e "  ${BOLD}不要先研究命令，先直接抄下面这些：${NC}"
 echo ""
-echo -e "  ${DIM}  skillfree models     # 查看所有模型${NC}"
-echo -e "  ${DIM}  skillfree credits    # 查看积分余额${NC}"
+echo -e "  ${CYAN}  做一个网站：${NC}"
+echo -e "  ${CYAN}  $ skillfree chat \"帮我做一个极简风 SaaS 官网，包含首页文案、功能区块、价格表、FAQ，并输出完整 HTML + CSS + JS\"${NC}"
+echo ""
+echo -e "  ${CYAN}  做一个短视频脚本：${NC}"
+echo -e "  ${CYAN}  $ skillfree chat \"帮我写一个 60 秒短视频脚本，主题是 AI 如何帮助中小企业降本增效，要有开场钩子、正文、结尾 CTA\"${NC}"
+echo ""
+echo -e "  ${CYAN}  生成一张配图：${NC}"
+echo -e "  ${CYAN}  $ skillfree pilot --type image --prompt \"科技感蓝紫色 AI 工作台插画，适合官网头图\" --output ./hero.png${NC}"
+echo ""
+echo -e "  ${CYAN}  做一个视频：${NC}"
+echo -e "  ${CYAN}  $ skillfree pilot --type video --model paiwo-v5.6-ttv --prompt \"一只未来感龙虾在霓虹都市中行走，电影感运镜，8秒\" --output ./video.mp4${NC}"
+echo ""
+echo -e "  ${CYAN}  做一段中文配音：${NC}"
+echo -e "  ${CYAN}  $ skillfree pilot --type tts --model speech-2.8-hd --text \"欢迎来到 SkillFree，现在开始你的 AI 创作之旅。\" --output ./voice.mp3${NC}"
+echo ""
+echo -e "  ${CYAN}  查今天 AI 新闻：${NC}"
+echo -e "  ${CYAN}  $ skillfree pilot --type search --prompt \"今天最重要的 AI 新闻，帮我总结成 5 条\"${NC}"
+echo ""
+echo -e "  ${DIM}更多能力：${NC}"
+echo -e "  ${DIM}  skillfree models      # 查看全部模型${NC}"
+echo -e "  ${DIM}  skillfree balance     # 查看积分余额${NC}"
+echo -e "  ${DIM}  skillfree auth status # 查看登录状态${NC}"
 echo ""
 echo -e "  ${DIM}充值积分：${NC}${CYAN}https://skillfree.tech/app/topup${NC}"
 echo ""
