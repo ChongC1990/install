@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SkillFree 一键安装脚本
-# curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@v1.0.0/install.sh | bash
+# curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@main/install.sh | bash
 
 # ── 颜色定义 ─────────────────────────────────────────────────────────────────
 CYAN='\033[0;36m'
