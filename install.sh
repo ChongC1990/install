@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SkillFree 一键安装脚本
-# curl -fsSL https://cdn.jsdelivr.net/gh/ChongC1990/install@main/install.sh | bash
+# curl -fsSL https://skillfree.tech/install.sh | bash
 
 # ── 颜色定义 ─────────────────────────────────────────────────────────────────
 CYAN='\033[0;36m'
@@ -32,8 +32,8 @@ cat << 'EOF'
   ╚══════╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝
 EOF
 echo -e "${NC}"
-echo -e "  ${DIM}🦞  一个 Key，调用 53+ 顶级 AI 模型${NC}"
-echo -e "  ${DIM}    Chat · Image · Video · TTS · Music · OCR · Search${NC}"
+echo -e "  ${DIM}🦞  模型与技能严选平台 — 只选每个场景最好用的那一个${NC}"
+echo -e "  ${DIM}    Claude · GPT · Gemini · nano banana · Veo · 合合 OCR${NC}"
 echo ""
 echo -e "  ${DIM}────────────────────────────────────────────────────${NC}"
 echo ""
@@ -94,13 +94,12 @@ fi
 # ── Step 3: 登录（从 /dev/tty 读取，兼容 curl | bash）────────────────────────
 step "[ 3 / 3 ]  登录账号"
 echo ""
-echo -e "  还没有账号？${CYAN}https://skillfree.tech/app${NC} 免费注册"
+echo -e "  还没有账号？${CYAN}https://skillfree.tech/app${NC} 免费注册，注册即送 ¥5"
 echo -e "  注册后进入控制台 → ${BOLD}API Keys${NC} → 创建一个 Key，粘贴到下方"
 echo ""
 
 API_KEY=""
 while true; do
-  # 强制从 /dev/tty 读取，避免 curl | bash 时 stdin 被占用
   printf "  请粘贴 API Key (sk-sf-...)，输入 q 跳过: "
   read -r API_KEY </dev/tty
 
@@ -116,12 +115,10 @@ while true; do
     continue
   fi
 
-  # 格式正确，直接保存（不做网络验证，避免 GFW 干扰）
   success "API Key 已保存"
   break
 done
 
-# 有效 Key → 交给 CLI 写入配置
 if [ -n "$API_KEY" ]; then
   SKILLFREE_API_KEY="$API_KEY" skillfree auth save "$API_KEY"
 fi
@@ -130,32 +127,35 @@ fi
 echo ""
 echo -e "  ${DIM}────────────────────────────────────────────────────${NC}"
 echo ""
-echo -e "${BOLD_GREEN}  🎉 全部搞定！现在你可以直接用自然语言让 SkillFree 干活${NC}"
+echo -e "${BOLD_GREEN}  🎉 安装完成！按任务选最强模型，开始干活${NC}"
 echo ""
-echo -e "  ${BOLD}不要先研究命令，先直接抄下面这些：${NC}"
+echo -e "  ${BOLD}直接抄这些命令试试：${NC}"
 echo ""
-echo -e "  ${CYAN}  做一个网站：${NC}"
-echo -e "  ${CYAN}  $ skillfree chat \"帮我做一个极简风 SaaS 官网，包含首页文案、功能区块、价格表、FAQ，并输出完整 HTML + CSS + JS\"${NC}"
+
+echo -e "  ${CYAN}✍️  写代码（Claude）：${NC}"
+echo -e "  ${DIM}  $ skillfree chat \"帮我用 Python 写一个批量重命名文件的脚本，支持正则匹配\"${NC}"
 echo ""
-echo -e "  ${CYAN}  做一个短视频脚本：${NC}"
-echo -e "  ${CYAN}  $ skillfree chat \"帮我写一个 60 秒短视频脚本，主题是 AI 如何帮助中小企业降本增效，要有开场钩子、正文、结尾 CTA\"${NC}"
+
+echo -e "  ${CYAN}📄  分析文档（GPT）：${NC}"
+echo -e "  ${DIM}  $ skillfree pilot --type chat --model gpt-5.4 --prompt \"总结这份报告的核心观点和风险点\" --file ./report.pdf${NC}"
 echo ""
-echo -e "  ${CYAN}  生成一张配图：${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type image --prompt \"科技感蓝紫色 AI 工作台插画，适合官网头图\" --output ./hero.png${NC}"
+
+echo -e "  ${CYAN}🎨  生成图片（nano banana）：${NC}"
+echo -e "  ${DIM}  $ skillfree pilot --type image --prompt \"赛博朋克上海夜景，霓虹灯反射在雨后街道\" --output ./image.png${NC}"
 echo ""
-echo -e "  ${CYAN}  做一个视频：${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type video --model paiwo-v5.6-ttv --prompt \"一只未来感龙虾在霓虹都市中行走，电影感运镜，8秒\" --output ./video.mp4${NC}"
+
+echo -e "  ${CYAN}🎬  生成视频（Veo）：${NC}"
+echo -e "  ${DIM}  $ skillfree pilot --type video --prompt \"樱花花瓣在微风中缓缓飘落，日式庭院，电影感\" --seconds 8 --size 1920x1080 --output ./video.mp4${NC}"
 echo ""
-echo -e "  ${CYAN}  做一段中文配音：${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type tts --model speech-2.8-hd --text \"欢迎来到 SkillFree，现在开始你的 AI 创作之旅。\" --output ./voice.mp3${NC}"
+
+echo -e "  ${CYAN}📑  OCR 解析文档（合合）：${NC}"
+echo -e "  ${DIM}  $ skillfree pilot --type ocr --file ./contract.pdf --output ./result.md${NC}"
 echo ""
-echo -e "  ${CYAN}  查今天 AI 新闻：${NC}"
-echo -e "  ${CYAN}  $ skillfree pilot --type search --prompt \"今天最重要的 AI 新闻，帮我总结成 5 条\"${NC}"
-echo ""
-echo -e "  ${DIM}更多能力：${NC}"
-echo -e "  ${DIM}  skillfree models      # 查看全部模型${NC}"
-echo -e "  ${DIM}  skillfree balance     # 查看积分余额${NC}"
+
+echo -e "  ${DIM}更多指令：${NC}"
+echo -e "  ${DIM}  skillfree models      # 查看全部模型和定价${NC}"
+echo -e "  ${DIM}  skillfree balance     # 查看账户余额${NC}"
 echo -e "  ${DIM}  skillfree auth status # 查看登录状态${NC}"
 echo ""
-echo -e "  ${DIM}充值积分：${NC}${CYAN}https://skillfree.tech/app/topup${NC}"
+echo -e "  ${DIM}充值地址：${NC}${CYAN}https://skillfree.tech/app/billing${NC}"
 echo ""
